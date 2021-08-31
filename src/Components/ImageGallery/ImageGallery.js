@@ -1,5 +1,8 @@
 import { Component } from 'react';
+import s from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
+import Loader from '../Loader/Loader';
+import API from '../services/gallery-api';
 
 // 'idle' - простой
 // 'pending' - ожидается
@@ -22,21 +25,14 @@ export default class ImageGallery extends Component {
       // console.log('this.props.photoName', nextName);
       this.setState({ status: 'pending' });
 
-      fetch(
-        `https://pixabay.com/api/?key=22354412-39f12e0c13d349d19862b3301&q=${nextName}&image_type=photo&per_page=12&page=1`,
-      )
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          }
-          return Promise.reject(new Error(`Нет такого имени ${nextName}`));
-        })
+      API.getPhoto(nextName)
         .then(photo => this.setState({ photo, status: 'resolved' }))
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
   }
   render() {
     const { photo, error, status } = this.state;
+    const { photoName } = this.props;
     // const { photoName } = this.props;
 
     if (status === 'idle') {
@@ -44,7 +40,8 @@ export default class ImageGallery extends Component {
     }
 
     if (status === 'pending') {
-      return <h1> Downloading... </h1>;
+      return <Loader />;
+      // <h1> Downloading... </h1>;
     }
 
     if (status === 'rejected') {
@@ -53,11 +50,13 @@ export default class ImageGallery extends Component {
 
     if (status === 'resolved') {
       return (
-        <ImageGalleryItem
-          url={photo.hits[1].webformatURL}
-          key={photo.id}
-          tags={photo.hits[1].tags}
-        />
+        <ul className={s.ImageGallery}>
+          <ImageGalleryItem
+            url={photo.hits[1].webformatURL}
+            key={photo.id}
+            tags={photo.hits[1].tags}
+          />
+        </ul>
       );
     }
 
