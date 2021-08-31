@@ -23,7 +23,7 @@ export default class ImageGallery extends Component {
       // console.log('изменилось фото');
       // console.log('prevProps.photoName', prevName);
       // console.log('this.props.photoName', nextName);
-      this.setState({ status: 'pending' });
+      this.setState({ photo: null, status: 'pending' });
 
       API.getPhoto(nextName)
         .then(photo => this.setState({ photo, status: 'resolved' }))
@@ -51,11 +51,10 @@ export default class ImageGallery extends Component {
     if (status === 'resolved') {
       return (
         <ul className={s.ImageGallery}>
-          <ImageGalleryItem
-            url={photo.hits[1].webformatURL}
-            key={photo.id}
-            tags={photo.hits[1].tags}
-          />
+          {photo.hits &&
+            photo.hits.map(image => (
+              <ImageGalleryItem url={image.webformatURL} key={image.id} tags={image.tags} />
+            ))}
         </ul>
       );
     }
