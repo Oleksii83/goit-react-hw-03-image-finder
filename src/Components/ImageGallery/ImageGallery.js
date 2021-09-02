@@ -2,6 +2,7 @@ import { Component } from 'react';
 import s from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import Loader from '../Loader/Loader';
+import Modal from '../Modal/Modal';
 import API from '../services/gallery-api';
 
 // 'idle' - простой
@@ -14,7 +15,10 @@ export default class ImageGallery extends Component {
     photo: null,
     error: null,
     status: 'idle',
+    showModal: false,
+    modalUrl: '',
   };
+
   componentDidUpdate(prevProps, prevState) {
     const prevName = prevProps.photoName;
     const nextName = this.props.photoName;
@@ -30,9 +34,19 @@ export default class ImageGallery extends Component {
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
   }
+
+  toggleModal = url => {
+    this.setState(prevState => {
+      return {
+        showModal: !prevState.showModal,
+        modalUrl: url,
+      };
+    });
+  };
+
   render() {
-    const { photo, error, status } = this.state;
-    const { photoName } = this.props;
+    const { photo, error, status, showModal, modalUrl } = this.state;
+
     // const { photoName } = this.props;
 
     if (status === 'idle') {
@@ -53,11 +67,30 @@ export default class ImageGallery extends Component {
         <ul className={s.ImageGallery}>
           {photo.hits &&
             photo.hits.map(image => (
-              <ImageGalleryItem url={image.webformatURL} key={image.id} tags={image.tags} />
+              <ImageGalleryItem
+                url={image.webformatURL}
+                key={image.id}
+                tags={image.tags}
+                modalUrl={image.largeImageURL}
+                onClick={this.toggleModal}
+              />
             ))}
+          {/* <button type="button" onClick={this.toggleModal}>
+            open modal
+          </button> */}
+          {showModal && (
+            <Modal onClose={this.toggleModal} url={modalUrl}>
+              {/* Modal block */}
+              {/* <button type="button" onClick={this.toggleModal}>
+                close 
+              </button> */}
+            </Modal>
+          )}
         </ul>
       );
     }
+
+    // showModal && <Modal modalImg={image.webformatURL} onClick={this.toggleModal} />;
 
     // return (
     //   <ul className="ImageGallery">
