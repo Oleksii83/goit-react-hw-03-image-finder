@@ -1,9 +1,11 @@
 import { Component } from 'react';
 import s from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
+import Button from '../Button/Button';
 import Loader from '../Loader/Loader';
 import Modal from '../Modal/Modal';
 import API from '../services/gallery-api';
+import { toast } from 'react-toastify';
 
 // 'idle' - простой
 // 'pending' - ожидается
@@ -15,6 +17,7 @@ export default class ImageGallery extends Component {
     photo: null,
     error: null,
     status: 'idle',
+    page: 1,
     showModal: false,
     modalUrl: '',
   };
@@ -27,12 +30,40 @@ export default class ImageGallery extends Component {
       // console.log('изменилось фото');
       // console.log('prevProps.photoName', prevName);
       // console.log('this.props.photoName', nextName);
-      this.setState({ photo: null, status: 'pending' });
+      this.setState({ photo: null, status: 'pending', page: 1 });
 
-      API.getPhoto(nextName)
+      API.getPhoto(nextName, prevName)
         .then(photo => this.setState({ photo, status: 'resolved' }))
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
+  }
+  //----------------------------------------------------------------------------------
+
+  componentDidPage(prevProps, prevState) {
+    const prevName = prevProps.photoName;
+    const nextName = this.props.photoName;
+
+    this.setState({ status: 'pending' });
+
+    API.getPhoto(nextName, prevName)
+      .then(photo => {
+        if (photo.hits.length === 0) {
+          toast.warning(`No image`);
+          return;
+        }
+        this.setState(prevState => {
+          return {
+            photo: [...prevState.photo, ...photo.hits],
+            page: prevState.page + 1,
+          };
+        });
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
+      })
+      .catch(error => this.setState({ error, status: 'rejected' }))
+      .finally(() => this.setState({ status: 'idle' }));
   }
 
   toggleModal = url => {
@@ -75,17 +106,8 @@ export default class ImageGallery extends Component {
                 onClick={this.toggleModal}
               />
             ))}
-          {/* <button type="button" onClick={this.toggleModal}>
-            open modal
-          </button> */}
-          {showModal && (
-            <Modal onClose={this.toggleModal} url={modalUrl}>
-              {/* Modal block */}
-              {/* <button type="button" onClick={this.toggleModal}>
-                close 
-              </button> */}
-            </Modal>
-          )}
+          {photo && <Button onClick={this.componentDidPage} />}
+          {showModal && <Modal onClose={this.toggleModal} url={modalUrl}></Modal>}
         </ul>
       );
     }
