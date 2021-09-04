@@ -55,7 +55,7 @@ export default class ImageGallery extends Component {
         }
         this.setState(prevState => {
           return {
-            pictures: [...prevState.pictures, ...pictures.hits],
+            pictures: { ...pictures, hits: [...prevState.pictures.hits, ...pictures.hits] },
             page: prevState.page + 1,
           };
         });
