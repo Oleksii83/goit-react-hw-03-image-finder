@@ -1,5 +1,6 @@
 import Loader from 'react-loader-spinner';
-export default function loader({ photoname }) {
+
+export default function loader({ query }) {
   //other logic
 
   return (

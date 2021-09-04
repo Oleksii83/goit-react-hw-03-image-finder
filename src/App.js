@@ -11,6 +11,8 @@ class App extends Component {
     loading: false,
   };
 
+  componentDidMount() {}
+
   onSubmit = query => {
     this.setState({ query });
     console.log(query);
@@ -29,4 +31,3 @@ class App extends Component {
 }
 
 export default App;
-// { this.state.photo &&}

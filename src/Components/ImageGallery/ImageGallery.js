@@ -25,6 +25,7 @@ export default class ImageGallery extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { query } = this.props;
     const { page } = this.state;
+
     if (prevProps.query !== query) {
       this.setState({ pictures: null, status: 'pending', page: 1 });
 
@@ -105,8 +106,6 @@ export default class ImageGallery extends Component {
   render() {
     const { pictures, error, status, showModal, modalUrl } = this.state;
 
-    // const { query } = this.props;
-
     if (status === 'idle') {
       return <div>Ведите название!!!</div>;
     }
@@ -159,4 +158,3 @@ export default class ImageGallery extends Component {
     // );
   }
 }
-// { this.state.photo && }
