@@ -3,22 +3,22 @@ import { toast } from 'react-toastify';
 
 export default class Searchbar extends Component {
   state = {
-    photoName: '',
+    value: '',
   };
 
   handleNameChange = event => {
-    this.setState({ photoName: event.currentTarget.value.toLowerCase() });
+    this.setState({ value: event.currentTarget.value.toLowerCase() });
   };
 
   handleSubmit = event => {
     event.preventDefault();
 
-    if (this.state.photoName.trim() === '') {
+    if (this.state.value.trim() === '') {
       toast('Enter name photo');
       return;
     }
-    this.props.onSubmit(this.state.photoName);
-    this.setState({ photoName: '' });
+    this.props.onSubmit(this.state.value);
+    this.setState({ value: '' });
   };
 
   render() {
@@ -32,7 +32,7 @@ export default class Searchbar extends Component {
           <input
             className="SearchForm-input"
             type="text"
-            value={this.state.photoName}
+            value={this.state.value}
             onChange={this.handleNameChange}
             // autocomplete="off"
             // autofocus

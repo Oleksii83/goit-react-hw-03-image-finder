@@ -7,20 +7,20 @@ import ImageGallery from './Components/ImageGallery/ImageGallery';
 
 class App extends Component {
   state = {
-    photoName: '',
+    query: '',
     loading: false,
   };
 
-  onSubmit = photoName => {
-    this.setState({ photoName });
-    console.log(photoName);
+  onSubmit = query => {
+    this.setState({ query });
+    console.log(query);
   };
   render() {
     return (
       <>
         <Searchbar onSubmit={this.onSubmit} />
         {/* {this.state.loading && <h1> Downloading... </h1>} */}
-        <ImageGallery photoName={this.state.photoName} />
+        <ImageGallery query={this.state.query} />
 
         <ToastContainer autoClose={3000} position="top-left" />
       </>
